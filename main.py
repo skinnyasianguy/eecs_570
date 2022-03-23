@@ -42,7 +42,7 @@ def clear_machine():
     return "Cleared"
 
 @app.route('/get_initial_state', methods=['GET'])
-def clear_machine():
+def get_initial_state():
     driver.setInitialState
     instructions = driver.getInstructions()
 
