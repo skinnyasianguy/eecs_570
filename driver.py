@@ -11,10 +11,20 @@ class Driver:
         for i in range (len(self.processors)):
             temp = {
                 "processor" : i,
-                "value" : 0
+                "value" : 0,
+                "register" : "A",
+                "state" : "Invalid"
             }
 
             self.instructions.append(temp)
+
+        temp = {
+            "processor" : -1,
+            "value" : 20,
+            "register" : "A",
+        }
+
+        self.instructions.append(temp)
 
     def getInstructions(self):
         return self.instructions
