@@ -31,13 +31,13 @@ class Driver:
             processorState = self.processors[i]
 
             if processorState == "Invalid":
-                instructions.append({
+                self.instructions.append({
                     "processor" : i,
                     "actions" : ["Load", "Store"]
                 })
 
-            elif processorState == "Shared"
-                instructions.append({
+            elif processorState == "Shared":
+                self.instructions.append({
                     "processor" : i,
                     "actions" : ["Load", "Store", "Evict"]
                 })
