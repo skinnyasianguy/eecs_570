@@ -45,10 +45,10 @@ class Driver:
                     "action": "BusReply",
                     "src": index,
                     "dst": processorID,
-                    "value": self.processors[processorID].getValue()
+                    "value": self.processors[index].getValue()
                 }
 
-                self.processors[processorID].setValue(self.processors[processorID].getValue())
+                self.processors[processorID].setValue(self.processors[index].getValue())
                 self.instructions.append(instruction)
 
 

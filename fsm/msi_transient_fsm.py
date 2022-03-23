@@ -20,7 +20,7 @@ class MSI_Transient_FSM:
                 instruction = {
                     "action": "BusRead",
                     "src": self.id,
-                    "dst": "Bus"
+                    "dst": -1
                 }
 
                 instructions.append(instruction)
