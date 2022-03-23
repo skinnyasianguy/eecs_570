@@ -1,8 +1,8 @@
 import flask
+import json 
 
-# A simple Flask App which takes
-# a user's name as input and responds
-# with "Hello {name}!"
+from fsm.msi_transient_fsm import MSI_Transient_FSM
+from driver import Driver
 
 app = flask.Flask(__name__)
 
@@ -15,8 +15,22 @@ def index():
 
 @app.route('/get_next_step', methods=['POST'])
 def get_next_step():
-   print(flask.request.json)
-   return flask.request.json
+   
+    msiFSM = MSI_Transient_FSM(0, 0, "Invalid")
+    msiFSM2 = MSI_Transient_FSM(1, 0, "Invalid")
+    msiFSM3 = MSI_Transient_FSM(2, 0, "Invalid")
+
+    processors = [msiFSM, msiFSM2, msiFSM3]
+    driver = Driver(processors, 20)
+
+    jsonBody = flask.request.json
+    action = jsonBody['action']
+    processorID = jsonBody['processor']
+
+    driver.processMessage(action, processorID) 
+    instructions = driver.getInstructions()
+
+    return json.dumps(instructions)
 
 if __name__ == '__main__':
     app.run()
