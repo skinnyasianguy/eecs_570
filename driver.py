@@ -5,13 +5,24 @@ class Driver:
         self.instructions = []
         self.memoryValue = memoryValue
 
+    # TODO : Make it better lmao
+    def setInitialState(self):
+
+        for i in range (len(self.procesors)):
+            temp = {
+                "processor" : i
+                "value" : 0
+            }
+
+            instructions.append(temp)
+
     def getInstructions(self):
         return self.instructions
 
     def clearInstructions(self):
         self.instructions = []
 
-    def reset():
+    def reset(self):
         for i in range (len(self.processors)):
             self.processors[i].setState("Invalid")
             self.processors[i].setValue(0)
