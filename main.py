@@ -30,7 +30,7 @@ def get_next_step():
     driver.processMessage(action, processorID) 
     instructions = driver.getInstructions()
 
-    return json.dumps(instructions)
+    return json.dumps(instructions, separators=(',', ':'))
 
 if __name__ == '__main__':
     app.run()
