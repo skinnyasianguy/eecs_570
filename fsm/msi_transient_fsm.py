@@ -8,7 +8,7 @@ class MSI_Transient_FSM:
 
     def getValue(self):
         return self.value
-        
+
     def setValue(self, value):
         self.value = value
 
@@ -23,7 +23,7 @@ class MSI_Transient_FSM:
                     "dst": "Bus"
                 }
 
-                instructions.append(json.dumps(instruction))
+                instructions.append(instruction)
                 self.state = "Shared"
 
             elif action == "GET_M":
