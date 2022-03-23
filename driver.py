@@ -52,6 +52,6 @@ class Driver:
                 self.instructions.append(instruction)
 
 
-        #self.clearInstructions()
+            self.hasValues[processorID] = True
 
     
