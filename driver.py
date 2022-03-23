@@ -8,7 +8,7 @@ class Driver:
     # TODO : Make it better lmao
     def setInitialState(self):
 
-        for i in range (len(self.procesors)):
+        for i in range (len(self.processors)):
             temp = {
                 "processor" : i,
                 "value" : 0
