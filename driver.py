@@ -26,6 +26,22 @@ class Driver:
 
         self.instructions.append(temp)
 
+    def getValidInstructions(self):
+        for i in range (len(self.processors)):
+            processorState = self.processors[i]
+
+            if processorState == "Invalid":
+                instructions.append({
+                    "processor" : i,
+                    "actions" : ["Load", "Store"]
+                })
+
+            elif processorState == "Shared"
+                instructions.append({
+                    "processor" : i,
+                    "actions" : ["Load", "Store", "Evict"]
+                })
+
     def getInstructions(self):
         return self.instructions
 
