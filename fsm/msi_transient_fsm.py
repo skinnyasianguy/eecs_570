@@ -1,5 +1,3 @@
-import json
-
 class MSI_Transient_FSM:
     def __init__(self, id, value, state):
         self.value = value
@@ -20,7 +18,7 @@ class MSI_Transient_FSM:
                 instruction = {
                     "action": "BusRead",
                     "src": self.id,
-                    "dst": -1
+                    "dst": -2
                 }
 
                 instructions.append(instruction)
@@ -32,8 +30,5 @@ class MSI_Transient_FSM:
 
             else:
                 print("Action not supported") 
-
-    def getValue(self):
-        return self.value
 
    

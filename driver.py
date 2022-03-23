@@ -1,5 +1,3 @@
-import json
-
 class Driver:
     def __init__(self, processors, memoryValue):
         self.processors = processors
@@ -28,23 +26,24 @@ class Driver:
 
             index = self.doesMemoryHaveData()
 
-            # Memory has data
+            # Memory has the data
             if index == -1:
                 instruction = {
                     "action": "BusReply",
                     "src": -1,
-                    "dst": processorID,
+                    "dst": -2,
                     "value": self.memoryValue
                 }
 
                 self.processors[processorID].setValue(self.memoryValue)
                 self.instructions.append(instruction)
 
+            # One of the processors has the data
             else:
                 instruction = {
                     "action": "BusReply",
                     "src": index,
-                    "dst": processorID,
+                    "dst": -2,
                     "value": self.processors[index].getValue()
                 }
 
