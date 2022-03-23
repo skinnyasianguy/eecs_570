@@ -10,7 +10,7 @@ class Driver:
 
         for i in range (len(self.procesors)):
             temp = {
-                "processor" : i
+                "processor" : i,
                 "value" : 0
             }
 
