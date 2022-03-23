@@ -10,6 +10,9 @@ class MSI_Transient_FSM:
     def setValue(self, value):
         self.value = value
 
+    def setState(self, state):
+        self.state = state
+
     def updateState(self, action, instructions):        
         if self.state == "Invalid":
             if action == "GET_S":

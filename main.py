@@ -35,5 +35,9 @@ def get_next_step():
     driver.clearInstructions()
     return result
 
+@app.route('/clear_machine', methods=['GET'])
+def clear_machine():
+    return "Not yet implemented"
+
 if __name__ == '__main__':
     app.run()

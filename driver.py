@@ -11,6 +11,11 @@ class Driver:
     def clearInstructions(self):
         self.instructions = []
 
+    def reset():
+        for i in range (len(self.processors)):
+            self.processors[i].setState("Invalid")
+            self.processors[i].setValue(0)
+
     def doesMemoryHaveData(self):
         retval = -1
 
@@ -35,9 +40,18 @@ class Driver:
                     "value": self.memoryValue
                 }
 
-                self.processors[processorID].setValue(self.memoryValue)
                 self.instructions.append(instruction)
 
+                instruction = {
+                    "action": "Update",
+                    "target": processorID,
+                    "value": self.memoryValue,
+                    "state": "Shared"
+                }
+
+                self.instructions.append(instruction)
+                self.processors[processorID].setValue(self.memoryValue)
+                
             # One of the processors has the data
             else:
                 instruction = {
@@ -46,9 +60,18 @@ class Driver:
                     "dst": -2,
                     "value": self.processors[index].getValue()
                 }
+                self.instructions.append(instruction)
+
+                instruction = {
+                    "action": "Update",
+                    "target": processorID,
+                    "value": self.processors[index].getValue(),
+                    "state": "Shared"
+                }
+                self.instructions.append(instruction)
 
                 self.processors[processorID].setValue(self.processors[index].getValue())
-                self.instructions.append(instruction)
+                
 
 
             self.hasValues[processorID] = True
