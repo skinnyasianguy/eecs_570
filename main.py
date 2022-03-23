@@ -37,7 +37,9 @@ def get_next_step():
 
 @app.route('/clear_machine', methods=['GET'])
 def clear_machine():
-    return "Not yet implemented"
+    driver.reset()
+
+    return "Cleared"
 
 if __name__ == '__main__':
     app.run()
