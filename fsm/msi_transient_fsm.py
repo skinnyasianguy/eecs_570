@@ -13,6 +13,9 @@ class MSI_Transient_FSM:
     def setState(self, state):
         self.state = state
 
+    def getState(self):
+        return self.state
+
     def updateState(self, action, instructions):        
         if self.state == "Invalid":
             if action == "GET_S":

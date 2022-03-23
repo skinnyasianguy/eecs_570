@@ -28,7 +28,7 @@ class Driver:
 
     def getValidInstructions(self):
         for i in range (len(self.processors)):
-            processorState = self.processors[i]
+            processorState = self.processors[i].getState()
 
             if processorState == "Invalid":
                 self.instructions.append({
