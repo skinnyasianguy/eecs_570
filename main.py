@@ -15,7 +15,8 @@ def index():
 
 @app.route('/get_next_step', methods=['POST'])
 def get_next_step():
-   return print(flask.request.json)
+   print(flask.request.json)
+   return flask.request.json
 
 if __name__ == '__main__':
     app.run()
