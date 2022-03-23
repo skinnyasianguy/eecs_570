@@ -13,5 +13,9 @@ def index():
         message = 'Hello ' + flask.request.form['name-input'] + '!'
     return flask.render_template('index.html', message=message)
 
+@app.route('/hello')
+def hello_world():
+   return "hello world"
+
 if __name__ == '__main__':
     app.run()
