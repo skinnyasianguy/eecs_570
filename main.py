@@ -3,8 +3,12 @@ import json
 
 from fsm.msi_transient_fsm import MSI_Transient_FSM
 from driver import Driver
+from flask_cors import CORS, cross_origin
 
 app = flask.Flask(__name__)
+CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
+
 msiFSM = MSI_Transient_FSM(0, 0, "Invalid")
 msiFSM2 = MSI_Transient_FSM(1, 0, "Invalid")
 msiFSM3 = MSI_Transient_FSM(2, 0, "Invalid")
@@ -20,6 +24,7 @@ def index():
     return flask.render_template('index.html', message=message)
 
 @app.route('/get_next_step', methods=['POST'])
+@cross_origin()
 def get_next_step():
     jsonBody = flask.request.json
     action = jsonBody['action']
