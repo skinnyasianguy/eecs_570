@@ -14,7 +14,7 @@ class Driver:
                 "value" : 0
             }
 
-            instructions.append(temp)
+            self.instructions.append(temp)
 
     def getInstructions(self):
         return self.instructions
