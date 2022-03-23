@@ -38,7 +38,7 @@ class Driver:
                 }
 
                 self.processors[processorID].setValue(self.memoryValue)
-                self.instructions.append(json.dumps(instruction))
+                self.instructions.append(instruction)
 
             else:
                 instruction = {
@@ -49,7 +49,7 @@ class Driver:
                 }
 
                 self.processors[processorID].setValue(self.processors[processorID].getValue())
-                self.instructions.append(json.dumps(instruction))
+                self.instructions.append(instruction)
 
 
         #self.clearInstructions()
