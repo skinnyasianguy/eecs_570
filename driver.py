@@ -132,7 +132,7 @@ class Driver:
                         "src": index,
                         "dst": -2
                     }
-                    instructions.append(instruction)
+                    self.instructions.append(instruction)
 
             instruction = {
                 "action": "Update",
