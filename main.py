@@ -27,6 +27,7 @@ def get_next_step():
     jsonBody = flask.request.json
     action = jsonBody['action']
     processorID = jsonBody['processor']
+    newValue = -1
 
     if action == "GetM":
         newValue = jsonBody['value']
