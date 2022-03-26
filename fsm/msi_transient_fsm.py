@@ -79,6 +79,15 @@ class MSI_Transient_FSM:
                 instructions.append(instruction)
                 self.state = "Modified"
 
+            elif action == "Evict":
+                instruction = {
+                    "action": "Update",
+                    "target": self.id,
+                    "value": 0, # TODO: change invalid value from 0 to Null
+                    "state": "Invalid"
+                }
+                self.instructions.append(instruction)
+
         elif self.state == "Modified":
             if action == "BusRd":
                 instruction = {
@@ -118,6 +127,27 @@ class MSI_Transient_FSM:
                     "state": "Invalid"
                 }
                 instructions.append(instruction)
+
+            elif action == "Evict":
+                self.value = 0
+
+                instruction = {
+                    "action": "BusWB",
+                    "src": self.id,
+                    "dst": -2
+                } 
+
+                self.instructions.append(instruction)
+
+                instruction = {
+                    "action": "Update",
+                    "target": self.id,
+                    "value": 0, # TODO: change invalid value from 0 to Null
+                    "state": "Invalid"
+                }
+                self.instructions.append(instruction)
+
+
 
 
 

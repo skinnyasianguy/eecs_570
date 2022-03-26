@@ -85,6 +85,15 @@ class Driver:
             # One of the processors has the data
             else:
                 self.processors[index].updateState("BusRd", self.instructions)
+                if self.processors[index].getState() == "Modified":
+                    self.memoryValue = self.processors[index].getValue()
+                    instruction = {
+                        "action": "Update",
+                        "target": -1,
+                        "value": self.memoryValue,
+                        "state": "hi"
+                    }
+                    self.instructions.append(instruction)
 
             updatedValue = self.memoryValue if index == -1 else self.processors[index].getValue()
 
@@ -144,6 +153,25 @@ class Driver:
 
             self.processors[processorID].setValue(newValue)
             self.hasValues[processorID] = True
-            
 
+        elif action == "EVICT":
+            originalState = self.processors[processorID].getState()
+            originalValue = self.processors[processorID].getValue()
+
+            self.processors[processorID].updateState(action, self.instructions)
+
+            if originalState == 'Modified':
+                self.memoryValue = originalValue
+
+                instruction = {
+                    "action": "Update",
+                    "target": -1,
+                    "value": 0,
+                    "state": "Invalid"
+                }
+                self.instructions.append(instruction)
+
+            
+            
+                
 
