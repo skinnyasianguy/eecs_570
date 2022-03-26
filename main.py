@@ -28,7 +28,10 @@ def get_next_step():
     action = jsonBody['action']
     processorID = jsonBody['processor']
 
-    driver.processMessage(action, processorID) 
+    if action == "GetM":
+        newValue = jsonBody['value']
+
+    driver.processMessage(action, processorID, newValue) 
     instructions = driver.getInstructions()
     result = json.dumps(instructions)
 
@@ -43,7 +46,7 @@ def clear_machine():
 
 @app.route('/get_valid_instructions', methods=['GET'])
 def get_valid_instructions():
-    driver.getValidInstructions()
+    driver.getValidActions()
     result = json.dumps(driver.getInstructions())
 
     driver.clearInstructions()

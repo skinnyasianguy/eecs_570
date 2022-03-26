@@ -26,7 +26,7 @@ class Driver:
 
         self.instructions.append(temp)
 
-    def getValidInstructions(self):
+    def getValidActions(self):
         for i in range (len(self.processors)):
             processorState = self.processors[i].getState()
 
@@ -53,64 +53,97 @@ class Driver:
             self.processors[i].setState("Invalid")
             self.processors[i].setValue(0)
 
-    def doesMemoryHaveData(self):
+    def doesMemoryHaveData(self, excludeIndex):
         retval = -1
 
         for i in range(len(self.hasValues)):
-            if self.hasValues[i]:
+            if self.hasValues[i] and i != excludeIndex:
                 return i
 
         return retval
 
-    def processMessage(self, action, processorID):
+    def processMessage(self, action, processorID, newValue):
         if action == "GET_S":
             self.processors[processorID].updateState(action, self.instructions)
 
-            index = self.doesMemoryHaveData()
+            # Processor was either Shared or Modified so nothing happens
+            if (len(self.instructions) == 0):
+                return
+
+            index = self.doesMemoryHaveData(-1)
 
             # Memory has the data
             if index == -1:
                 instruction = {
                     "action": "BusReply",
                     "src": -1,
-                    "dst": -2,
-                    "value": self.memoryValue
+                    "dst": -2
                 }
 
                 self.instructions.append(instruction)
-
-                instruction = {
-                    "action": "Update",
-                    "target": processorID,
-                    "value": self.memoryValue,
-                    "state": "Shared"
-                }
-
-                self.instructions.append(instruction)
-                self.processors[processorID].setValue(self.memoryValue)
                 
             # One of the processors has the data
             else:
-                instruction = {
-                    "action": "BusReply",
-                    "src": index,
-                    "dst": -2,
-                    "value": self.processors[index].getValue()
-                }
-                self.instructions.append(instruction)
+                self.processors[index].updateState("BusRd", self.instructions)
 
-                instruction = {
-                    "action": "Update",
-                    "target": processorID,
-                    "value": self.processors[index].getValue(),
-                    "state": "Shared"
-                }
-                self.instructions.append(instruction)
+            updatedValue = self.memoryValue if index == -1 else self.processors[index].getValue()
 
-                self.processors[processorID].setValue(self.processors[index].getValue())
-                
-
-
+            instruction = {
+                "action": "Update",
+                "target": processorID,
+                "value": updatedValue,
+                "state": "Shared"
+            }
+            self.instructions.append(instruction)
+            
+            self.processors[processorID].setValue(updatedValue)
             self.hasValues[processorID] = True
 
-    
+        elif action == "GET_M":
+            self.processors[processorID].updateState(action, self.instructions)
+
+            # Processor was Modified so nothing happens
+            if (len(self.instructions) == 0):
+                return
+
+            busInstruction = self.instructions[0]['action']
+            index = self.doesMemoryHaveData(processorID)
+
+            for i in range(len(self.processors)):
+                if i == processorID:
+                    continue
+
+                self.processors[i].updateState(busInstruction, self.instructions)
+                self.hasValues[i] = False
+
+            if busInstruction == "BusRdX":
+                if index == -1:
+                    instruction = {
+                        "action": "BusReply",
+                        "src": -1,
+                        "dst":-2
+                    }
+
+                    self.instructions.append(instruction)
+
+                else: 
+                    instruction = {
+                        "action": "BusReply",
+                        "src": index,
+                        "dst": -2
+                    }
+                    instructions.append(instruction)
+
+            instruction = {
+                "action": "Update",
+                "target": processorID,
+                "value": newValue,
+                "state": "Modified"
+            }
+            self.instructions.append(instruction)
+
+            self.processors[processorID].setValue(newValue)
+            self.hasValues[processorID] = True
+            
+
+
