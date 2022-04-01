@@ -49,6 +49,7 @@ class MSI_Transient_FSM_Memory:
                 instruction = {
                     "action" : constants.EVENT_DATA,
                     "value" : self.value,
+                    "target" : message["src"],
                     "src" : self.id, 
                     "dst" : constants.BUS_ID
                 }
