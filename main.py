@@ -30,19 +30,19 @@ def execute_processor_action():
     jsonBody = flask.request.json
 
     driver.processProcessorAction(jsonBody) 
-    instructions = driver.getInstructions()
-    result = json.dumps(instructions)
+    buffer = driver.getBuffer()
+    result = json.dumps(buffer)
 
-    driver.clearInstructions()
+    driver.clearBuffer()
     return result
 
 @app.route('/execute_bus_event', methods=['POST'])
 def execute_bus_event():
     driver.processBusEvent()
-    instructions = driver.getInstructions()
-    result = json.dumps(instructions)
+    buffer = driver.getBuffer()
+    result = json.dumps(buffer)
 
-    driver.clearInstructions()
+    driver.clearBuffer()
     return result
 
 @app.route('/get_bus_events', methods=['GET'])
@@ -59,19 +59,19 @@ def clear_machine():
 @app.route('/get_valid_instructions', methods=['GET'])
 def get_valid_instructions():
     driver.loadValidActions()
-    result = json.dumps(driver.getInstructions())
+    result = json.dumps(driver.getBuffer())
 
-    driver.clearInstructions()
+    driver.clearBuffer()
     return result
 
 # TODO : Need to fix this when we add more protocols
 @app.route('/get_initial_state', methods=['GET'])
 def get_initial_state():
     driver.setInitialState()
-    instructions = driver.getInstructions()
+    buffer = driver.getBuffer()
 
-    result = json.dumps(instructions)
-    driver.clearInstructions()
+    result = json.dumps(buffer)
+    driver.clearBuffer()
     return result
 
 if __name__ == '__main__':
