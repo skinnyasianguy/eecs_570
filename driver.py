@@ -1,149 +1,76 @@
+import constants
+
 class Driver:
-    def __init__(self, processors, memoryValue):
+    def __init__(self, processors, memory):
         self.processors = processors
-        self.hasValues = [False, False, False]
-        self.instructions = []
-        self.memoryValue = memoryValue
+        self.memory = memory
 
-    # TODO : Make it better lmao
+        # Buffer for return values to be sent back to the front end
+        self.buffer = []
+
+        # Representation of what is on the bus
+        self.bus = []
+
     def setInitialState(self):
-
         for i in range (len(self.processors)):
-            temp = {
+            instruction = {
                 "processor" : i,
-                "value" : 0,
-                "register" : "A",
-                "state" : "Invalid"
+                "value" : constants.NULL_VALUE,
+                "state" : constants.STATE_I
             }
 
-            self.instructions.append(temp)
+            self.buffer.append(instruction)
 
-        temp = {
-            "processor" : -1,
-            "value" : 20,
-            "register" : "A",
+        instruction = {
+            "processor" : constants.MEMORY_ID,
+            "value" : constants.DEFAUT_VALUE
         }
 
-        self.instructions.append(temp)
+        self.buffer.append(instruction)
 
-    def getValidActions(self):
+    # Load all possible actions into the buffer
+    def loadValidActions(self):
         for i in range (len(self.processors)):
-            processorState = self.processors[i].getState()
+            self.processors[i].loadValidActions(self.buffer)
 
-            if processorState == "Invalid":
-                self.instructions.append({
-                    "processor" : i,
-                    "actions" : ["Load", "Store"]
-                })
+    def getBuffer(self):
+        return self.buffer
 
-            elif processorState == "Shared":
-                self.instructions.append({
-                    "processor" : i,
-                    "actions" : ["Load", "Store", "Evict"]
-                })
+    def clearBuffer(self):
+        self.buffer = []
 
-    def getInstructions(self):
-        return self.instructions
+    def getBus(self):
+        return self.bus
 
-    def clearInstructions(self):
-        self.instructions = []
+    def clearBus(self):
+        self.bus = []
 
     def reset(self):
         for i in range (len(self.processors)):
-            self.processors[i].setState("Invalid")
-            self.processors[i].setValue(0)
+            self.processors[i].setState(constants.STATE_I)
+            self.processors[i].setValue(constants.DEFAUT_VALUE)
 
-    def doesMemoryHaveData(self, excludeIndex):
-        retval = -1
+        self.memory.setState(constants.STATE_I_OR_S)
+        self.memory.setValue(constants.DEFAUT_VALUE)
 
-        for i in range(len(self.hasValues)):
-            if self.hasValues[i] and i != excludeIndex:
-                return i
+    def processProcessorAction(self, message):
+        processorID = message["processor"]
+        self.processors[processorID].updateState(message, self.buffer, self.bus)
 
-        return retval
+    def processBusEvent(self):
+        # Empty bus so don't do anything
+        if len(self.bus) == 0:
+            return
 
-    def processMessage(self, action, processorID, newValue):
-        if action == "GET_S":
-            self.processors[processorID].updateState(action, self.instructions)
+        message = self.bus[0] # Process first message in the bus
+        for i in range(len(self.processors)):
+            self.processors[i].updateState(message, self.buffer, self.bus)
 
-            # Processor was either Shared or Modified so nothing happens
-            if (len(self.instructions) == 0):
-                return
+        self.memory.updateState(message, self.buffer, self.bus)
 
-            index = self.doesMemoryHaveData(-1)
+        self.bus.pop(0) # Finished processing bus message so remove from bus
 
-            # Memory has the data
-            if index == -1:
-                instruction = {
-                    "action": "BusReply",
-                    "src": -1,
-                    "dst": -2
-                }
-
-                self.instructions.append(instruction)
-                
-            # One of the processors has the data
-            else:
-                self.processors[index].updateState("BusRd", self.instructions)
-
-            updatedValue = self.memoryValue if index == -1 else self.processors[index].getValue()
-
-            instruction = {
-                "action": "Update",
-                "target": processorID,
-                "value": updatedValue,
-                "state": "Shared"
-            }
-            self.instructions.append(instruction)
-            
-            self.processors[processorID].setValue(updatedValue)
-            self.hasValues[processorID] = True
-
-        elif action == "GET_M":
-            self.processors[processorID].updateState(action, self.instructions)
-
-            # Processor was Modified so nothing happens
-            if (len(self.instructions) == 0):
-                return
-
-            busInstruction = self.instructions[0]['action']
-            index = self.doesMemoryHaveData(processorID)
-
-            for i in range(len(self.processors)):
-                if i == processorID:
-                    continue
-
-                self.processors[i].updateState(busInstruction, self.instructions)
-                self.hasValues[i] = False
-
-            if busInstruction == "BusRdX":
-                if index == -1:
-                    instruction = {
-                        "action": "BusReply",
-                        "src": -1,
-                        "dst":-2
-                    }
-
-                    self.instructions.append(instruction)
-
-                else: 
-                    instruction = {
-                        "action": "BusReply",
-                        "src": index,
-                        "dst": -2
-                    }
-                    self.instructions.append(instruction)
-
-            instruction = {
-                "action": "Update",
-                "target": processorID,
-                "value": newValue,
-                "state": "Modified"
-            }
-            self.instructions.append(instruction)
-
-            self.processors[processorID].setValue(newValue)
-            self.hasValues[processorID] = True
+        
             
 
 
