@@ -29,7 +29,7 @@ def index():
 def execute_processor_action():
     jsonBody = flask.request.json
 
-    driver.processMessage(jsonBody) 
+    driver.processProcessorAction(jsonBody) 
     instructions = driver.getInstructions()
     result = json.dumps(instructions)
 
