@@ -46,7 +46,7 @@ def execute_bus_event():
     return result
 
 @app.route('/get_bus_events', methods=['GET'])
-def execute_bus_event():
+def get_bus_event():
     result = json.dumps(driver.getBus())
     return result
 
