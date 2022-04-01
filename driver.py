@@ -69,8 +69,7 @@ class Driver:
         self.memory.updateState(message, self.buffer, self.bus)
 
         self.bus.pop(0) # Finished processing bus message so remove from bus
-
-        
             
-
+            
+                
 
