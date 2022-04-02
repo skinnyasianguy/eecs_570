@@ -42,7 +42,7 @@ def execute_processor_action():
 def execute_bus_event():
     jsonBody = flask.request.json
     driver.processBusEvent(jsonBody.get("busIndex", 0))
-    
+
     buffer = driver.getBuffer()
     result = json.dumps(buffer)
 
@@ -68,7 +68,6 @@ def get_valid_instructions():
     driver.clearBuffer()
     return result
 
-# TODO : Need to fix this when we add more protocols
 @app.route('/get_initial_state', methods=['GET'])
 def get_initial_state():
 
@@ -83,6 +82,13 @@ def get_initial_state():
     return result
 
 def initDriver(protocol):
+    global msiFSM
+    global msiFSM2
+    global msiFSM3
+
+    global memory 
+    global processors
+    global driver
 
     if protocol == "MSI":
         msiFSM = MSI_Transient_FSM_Cache(0, constants.NULL_VALUE, constants.STATE_I)
