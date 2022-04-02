@@ -6,9 +6,11 @@ from fsm.msi_transient_fsm_cache import MSI_Transient_FSM_Cache
 from fsm.msi_transient_fsm_memory import MSI_Transient_FSM_Memory
 from driver import Driver
 from flask_cors import CORS
+from flask import request
 
 app = flask.Flask(__name__)
 CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 msiFSM = MSI_Transient_FSM_Cache(0, constants.NULL_VALUE, constants.STATE_I)
 msiFSM2 = MSI_Transient_FSM_Cache(1, constants.NULL_VALUE, constants.STATE_I)
@@ -38,7 +40,9 @@ def execute_processor_action():
 
 @app.route('/execute_bus_event', methods=['POST'])
 def execute_bus_event():
-    driver.processBusEvent()
+    jsonBody = flask.request.json
+    driver.processBusEvent(jsonBody.get("busIndex", 0))
+    
     buffer = driver.getBuffer()
     result = json.dumps(buffer)
 
@@ -67,12 +71,33 @@ def get_valid_instructions():
 # TODO : Need to fix this when we add more protocols
 @app.route('/get_initial_state', methods=['GET'])
 def get_initial_state():
+
+    protocol = request.args.get('protocol')
+    initDriver(protocol)
+
     driver.setInitialState()
     buffer = driver.getBuffer()
 
     result = json.dumps(buffer)
     driver.clearBuffer()
     return result
+
+def initDriver(protocol):
+
+    if protocol == "MSI":
+        msiFSM = MSI_Transient_FSM_Cache(0, constants.NULL_VALUE, constants.STATE_I)
+        msiFSM2 = MSI_Transient_FSM_Cache(1, constants.NULL_VALUE, constants.STATE_I)
+        msiFSM3 = MSI_Transient_FSM_Cache(2, constants.NULL_VALUE, constants.STATE_I)
+        memory = MSI_Transient_FSM_Memory(constants.DEFAUT_VALUE, constants.STATE_I_OR_S)
+
+    elif protocol == "MESI":
+        msiFSM = MSI_Transient_FSM_Cache(0, constants.NULL_VALUE, constants.STATE_I)
+        msiFSM2 = MSI_Transient_FSM_Cache(1, constants.NULL_VALUE, constants.STATE_I)
+        msiFSM3 = MSI_Transient_FSM_Cache(2, constants.NULL_VALUE, constants.STATE_I)
+        memory = MSI_Transient_FSM_Memory(constants.DEFAUT_VALUE, constants.STATE_I_OR_S)
+
+    processors = [msiFSM, msiFSM2, msiFSM3]
+    driver = Driver(processors, memory)
 
 if __name__ == '__main__':
     app.run()

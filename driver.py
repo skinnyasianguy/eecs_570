@@ -57,18 +57,18 @@ class Driver:
         processorID = message["processor"]
         self.processors[processorID].updateState(message, self.buffer, self.bus)
 
-    def processBusEvent(self):
+    def processBusEvent(self, busIndex):
         # Empty bus so don't do anything
         if len(self.bus) == 0:
             return
 
-        message = self.bus[0] # Process first message in the bus
+        message = self.bus[busIndex] 
         for i in range(len(self.processors)):
             self.processors[i].updateState(message, self.buffer, self.bus)
 
         self.memory.updateState(message, self.buffer, self.bus)
 
-        self.bus.pop(0) # Finished processing bus message so remove from bus
+        self.bus.pop(busIndex) # Finished processing bus message so remove from bus
             
             
                 
