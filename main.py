@@ -4,6 +4,9 @@ import constants
 
 from fsm.msi_transient_fsm_cache import MSI_Transient_FSM_Cache
 from fsm.msi_transient_fsm_memory import MSI_Transient_FSM_Memory
+from fsm.msi_split_fsm_cache import MSI_Split_FSM_Cache
+from fsm.msi_split_fsm_memory import MSI_Split_FSM_Memory
+
 from driver import Driver
 from flask_cors import CORS
 from flask import request
@@ -72,7 +75,8 @@ def get_valid_instructions():
 def get_initial_state():
 
     protocol = request.args.get('protocol')
-    initDriver(protocol)
+    type = request.args.get('type')
+    initDriver(protocol, type)
 
     driver.setInitialState()
     buffer = driver.getBuffer()
@@ -81,7 +85,7 @@ def get_initial_state():
     driver.clearBuffer()
     return result
 
-def initDriver(protocol):
+def initDriver(protocol, type):
     global msiFSM
     global msiFSM2
     global msiFSM3
@@ -91,11 +95,19 @@ def initDriver(protocol):
     global driver
 
     if protocol == "MSI":
-        msiFSM = MSI_Transient_FSM_Cache(0, constants.NULL_VALUE, constants.STATE_I)
-        msiFSM2 = MSI_Transient_FSM_Cache(1, constants.NULL_VALUE, constants.STATE_I)
-        msiFSM3 = MSI_Transient_FSM_Cache(2, constants.NULL_VALUE, constants.STATE_I)
-        memory = MSI_Transient_FSM_Memory(constants.DEFAUT_VALUE, constants.STATE_I_OR_S)
+        if type == "baseline":
+            msiFSM = MSI_Transient_FSM_Cache(0, constants.NULL_VALUE, constants.STATE_I)
+            msiFSM2 = MSI_Transient_FSM_Cache(1, constants.NULL_VALUE, constants.STATE_I)
+            msiFSM3 = MSI_Transient_FSM_Cache(2, constants.NULL_VALUE, constants.STATE_I)
+            memory = MSI_Transient_FSM_Memory(constants.DEFAUT_VALUE, constants.STATE_I_OR_S)
+        
+        elif type == "split":
+            msiFSM = MSI_Split_FSM_Cache(0, constants.NULL_VALUE, constants.STATE_I)
+            msiFSM2 = MSI_Split_FSM_Cache(1, constants.NULL_VALUE, constants.STATE_I)
+            msiFSM3 = MSI_Split_FSM_Cache(2, constants.NULL_VALUE, constants.STATE_I)
+            memory = MSI_Split_FSM_Memory(constants.DEFAUT_VALUE, constants.STATE_I_OR_S)
 
+    # TODO : Change when MESI is done
     elif protocol == "MESI":
         msiFSM = MSI_Transient_FSM_Cache(0, constants.NULL_VALUE, constants.STATE_I)
         msiFSM2 = MSI_Transient_FSM_Cache(1, constants.NULL_VALUE, constants.STATE_I)
