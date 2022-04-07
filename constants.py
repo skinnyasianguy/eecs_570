@@ -16,6 +16,8 @@ EVENT_PUT_M = "PutM"
 EVENT_LOAD = "Load"
 EVENT_STORE = "Store"
 EVENT_EVICT = "Evict"
+EVENT_NO_DATA_E = "NoData_E"
+EVENT_NO_DATA = "NoData"
 
 # Constants for Cache Controller States
 STATE_I = "I"
