@@ -32,6 +32,8 @@ STATE_SM_AD = "SM_AD"
 STATE_SM_A = "SM_A"
 STATE_MI_A = "MI_A"
 STATE_II_A = "II_A"
+STATE_E = "E"
+STATE_EI_A = "EI_A"
 
 # Constants for Memory Controller States
 STATE_I_OR_S = "IorS"
