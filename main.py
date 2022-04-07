@@ -4,11 +4,16 @@ import constants
 
 from fsm.msi_transient_fsm_cache import MSI_Transient_FSM_Cache
 from fsm.msi_transient_fsm_memory import MSI_Transient_FSM_Memory
+from fsm.msi_split_fsm_cache import MSI_Split_FSM_Cache
+from fsm.msi_split_fsm_memory import MSI_Split_FSM_Memory
+
 from driver import Driver
 from flask_cors import CORS
+from flask import request
 
 app = flask.Flask(__name__)
 CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 msiFSM = MSI_Transient_FSM_Cache(0, constants.NULL_VALUE, constants.STATE_I)
 msiFSM2 = MSI_Transient_FSM_Cache(1, constants.NULL_VALUE, constants.STATE_I)
@@ -38,7 +43,9 @@ def execute_processor_action():
 
 @app.route('/execute_bus_event', methods=['POST'])
 def execute_bus_event():
-    driver.processBusEvent()
+    jsonBody = flask.request.json
+    driver.processBusEvent(jsonBody.get("busIndex", 0))
+
     buffer = driver.getBuffer()
     result = json.dumps(buffer)
 
@@ -64,15 +71,51 @@ def get_valid_instructions():
     driver.clearBuffer()
     return result
 
-# TODO : Need to fix this when we add more protocols
 @app.route('/get_initial_state', methods=['GET'])
 def get_initial_state():
+
+    protocol = request.args.get('protocol')
+    type = request.args.get('type')
+    initDriver(protocol, type)
+
     driver.setInitialState()
     buffer = driver.getBuffer()
 
     result = json.dumps(buffer)
     driver.clearBuffer()
     return result
+
+def initDriver(protocol, type):
+    global msiFSM
+    global msiFSM2
+    global msiFSM3
+
+    global memory 
+    global processors
+    global driver
+
+    if protocol == "MSI":
+        if type == "baseline":
+            msiFSM = MSI_Transient_FSM_Cache(0, constants.NULL_VALUE, constants.STATE_I)
+            msiFSM2 = MSI_Transient_FSM_Cache(1, constants.NULL_VALUE, constants.STATE_I)
+            msiFSM3 = MSI_Transient_FSM_Cache(2, constants.NULL_VALUE, constants.STATE_I)
+            memory = MSI_Transient_FSM_Memory(constants.DEFAUT_VALUE, constants.STATE_I_OR_S)
+        
+        elif type == "split":
+            msiFSM = MSI_Split_FSM_Cache(0, constants.NULL_VALUE, constants.STATE_I)
+            msiFSM2 = MSI_Split_FSM_Cache(1, constants.NULL_VALUE, constants.STATE_I)
+            msiFSM3 = MSI_Split_FSM_Cache(2, constants.NULL_VALUE, constants.STATE_I)
+            memory = MSI_Split_FSM_Memory(constants.DEFAUT_VALUE, constants.STATE_I_OR_S)
+
+    # TODO : Change when MESI is done
+    elif protocol == "MESI":
+        msiFSM = MSI_Transient_FSM_Cache(0, constants.NULL_VALUE, constants.STATE_I)
+        msiFSM2 = MSI_Transient_FSM_Cache(1, constants.NULL_VALUE, constants.STATE_I)
+        msiFSM3 = MSI_Transient_FSM_Cache(2, constants.NULL_VALUE, constants.STATE_I)
+        memory = MSI_Transient_FSM_Memory(constants.DEFAUT_VALUE, constants.STATE_I_OR_S)
+
+    processors = [msiFSM, msiFSM2, msiFSM3]
+    driver = Driver(processors, memory)
 
 if __name__ == '__main__':
     app.run()

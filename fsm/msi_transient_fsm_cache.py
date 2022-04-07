@@ -126,7 +126,7 @@ class MSI_Transient_FSM_Cache:
                 buffer.append(instruction)
                 bus.append(instruction)
 
-                self.state = constants.STATE_S
+                self.state = constants.STATE_I
                 self.value = constants.NULL_VALUE
                 self.recordUpdate(self.value, buffer)
 
