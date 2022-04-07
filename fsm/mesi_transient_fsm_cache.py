@@ -43,6 +43,26 @@ class MSI_Transient_FSM_Cache:
     def updateState(self, message, buffer, bus):  
         event = message["action"]
 
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         if self.state == constants.STATE_I:
             if event == constants.EVENT_LOAD:
                 print("Processor ", self.id, " is transitioning from I to IS_D")
@@ -136,7 +156,6 @@ class MSI_Transient_FSM_Cache:
                 instruction = {
                     "action" : constants.EVENT_DATA,
                     "src" : self.id,
-                    "target" : message["src"],
                     "dst" : constants.BUS_ID,
                     "value" : self.value
                 }
