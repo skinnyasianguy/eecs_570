@@ -16,13 +16,8 @@ EVENT_PUT_M = "PutM"
 EVENT_LOAD = "Load"
 EVENT_STORE = "Store"
 EVENT_EVICT = "Evict"
-<<<<<<< HEAD
-EVENT_NO_DATA = "NoData"
-EVENT_NO_DATA_E = "NoDataE"
-=======
 EVENT_NO_DATA_E = "NoData_E"
 EVENT_NO_DATA = "NoData"
->>>>>>> 4453385003fb45c6c20c68724efa9e161fe99a54
 
 # Constants for Cache Controller States
 STATE_I = "I"
@@ -42,18 +37,13 @@ STATE_II_A = "II_A"
 STATE_E = "E"
 STATE_EI_A = "EI_A"
 
-
 # Constants for Memory Controller States
 STATE_I_OR_S = "IorS"
 STATE_I_OR_S_D = "IorS_D"
-<<<<<<< HEAD
 STATE_M = "M"
 STATE_E_OR_M = "EorM"
 STATE_I_D = "I_D"
 STATE_S_D = "S_D"
 STATE_E_OR_M_D = "EorM_D"
 STATE_E_OR_M = "EorM"
-=======
 STATE_I_OR_S_A = "IorS_A"
-STATE_M = "M"
->>>>>>> 4453385003fb45c6c20c68724efa9e161fe99a54
