@@ -12,18 +12,20 @@ class Driver:
         self.bus = []
 
     def setInitialState(self):
+        self.reset() # Clear everything back to default first
+
         for i in range (len(self.processors)):
             instruction = {
                 "processor" : i,
-                "value" : constants.NULL_VALUE,
-                "state" : constants.STATE_I
+                "value" : self.processors[i].getValue(),
+                "state" : self.processors[i].getState()
             }
 
             self.buffer.append(instruction)
 
         instruction = {
             "processor" : constants.MEMORY_ID,
-            "value" : constants.DEFAUT_VALUE
+            "value" : self.memory.getValue()
         }
 
         self.buffer.append(instruction)
@@ -48,7 +50,7 @@ class Driver:
     def reset(self):
         for i in range (len(self.processors)):
             self.processors[i].setState(constants.STATE_I)
-            self.processors[i].setValue(constants.DEFAUT_VALUE)
+            self.processors[i].setValue(constants.NULL_VALUE)
 
         self.memory.reset()
         self.clearBus()
