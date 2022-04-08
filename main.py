@@ -113,7 +113,7 @@ def initDriver(protocol, type):
         msiFSM = MESI_Transient_FSM_Cache(0, constants.NULL_VALUE, constants.STATE_I)
         msiFSM2 = MESI_Transient_FSM_Cache(1, constants.NULL_VALUE, constants.STATE_I)
         msiFSM3 = MESI_Transient_FSM_Cache(2, constants.NULL_VALUE, constants.STATE_I)
-        memory = MESI_Transient_FSM_Memory(constants.DEFAUT_VALUE, constants.STATE_I_OR_S)
+        memory = MESI_Transient_FSM_Memory(constants.DEFAUT_VALUE, constants.STATE_I)
 
     processors = [msiFSM, msiFSM2, msiFSM3]
     driver = Driver(processors, memory)
