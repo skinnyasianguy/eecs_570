@@ -50,8 +50,9 @@ class Driver:
             self.processors[i].setState(constants.STATE_I)
             self.processors[i].setValue(constants.DEFAUT_VALUE)
 
-        self.memory.setState(constants.STATE_I_OR_S)
-        self.memory.setValue(constants.DEFAUT_VALUE)
+        self.memory.reset()
+        self.clearBus()
+        self.clearBuffer()
 
     def processProcessorAction(self, message):
         processorID = message["processor"]

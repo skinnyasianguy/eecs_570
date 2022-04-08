@@ -6,6 +6,8 @@ from fsm.msi_transient_fsm_cache import MSI_Transient_FSM_Cache
 from fsm.msi_transient_fsm_memory import MSI_Transient_FSM_Memory
 from fsm.msi_split_fsm_cache import MSI_Split_FSM_Cache
 from fsm.msi_split_fsm_memory import MSI_Split_FSM_Memory
+from fsm.mesi_transient_fsm_cache import MESI_Transient_FSM_Cache
+from fsm.mesi_transient_fsm_memory import MESI_Transient_FSM_Memory
 
 from driver import Driver
 from flask_cors import CORS
@@ -107,12 +109,11 @@ def initDriver(protocol, type):
             msiFSM3 = MSI_Split_FSM_Cache(2, constants.NULL_VALUE, constants.STATE_I)
             memory = MSI_Split_FSM_Memory(constants.DEFAUT_VALUE, constants.STATE_I_OR_S)
 
-    # TODO : Change when MESI is done
     elif protocol == "MESI":
-        msiFSM = MSI_Transient_FSM_Cache(0, constants.NULL_VALUE, constants.STATE_I)
-        msiFSM2 = MSI_Transient_FSM_Cache(1, constants.NULL_VALUE, constants.STATE_I)
-        msiFSM3 = MSI_Transient_FSM_Cache(2, constants.NULL_VALUE, constants.STATE_I)
-        memory = MSI_Transient_FSM_Memory(constants.DEFAUT_VALUE, constants.STATE_I_OR_S)
+        msiFSM = MESI_Transient_FSM_Cache(0, constants.NULL_VALUE, constants.STATE_I)
+        msiFSM2 = MESI_Transient_FSM_Cache(1, constants.NULL_VALUE, constants.STATE_I)
+        msiFSM3 = MESI_Transient_FSM_Cache(2, constants.NULL_VALUE, constants.STATE_I)
+        memory = MESI_Transient_FSM_Memory(constants.DEFAUT_VALUE, constants.STATE_I_OR_S)
 
     processors = [msiFSM, msiFSM2, msiFSM3]
     driver = Driver(processors, memory)

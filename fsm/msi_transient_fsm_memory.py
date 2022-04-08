@@ -27,6 +27,10 @@ class MSI_Transient_FSM_Memory:
         }
         buffer.append(instruction)
 
+    def reset(self):
+        self.state = constants.STATE_I_OR_S
+        self.value = constants.DEFAUT_VALUE
+
     def updateState(self, message, buffer, bus):  
         event = message["action"]
 

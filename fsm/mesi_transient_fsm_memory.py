@@ -27,6 +27,10 @@ class MESI_Transient_FSM_Memory:
         }
         buffer.append(instruction)
 
+    def reset(self):
+        self.state = constants.STATE_I
+        self.value = constants.DEFAUT_VALUE
+
     def updateState(self, message, buffer, bus):  
         event = message["action"]
 
@@ -80,6 +84,7 @@ class MESI_Transient_FSM_Memory:
         elif self.state == constants.STATE_E_OR_M:
             if event == constants.EVENT_GET_S:
                 self.state = constants.STATE_S_D
+                
             elif event == constants.EVENT_PUT_M:
                 self.state = constants.STATE_E_OR_M_D
                 
@@ -88,6 +93,7 @@ class MESI_Transient_FSM_Memory:
                 self.state = constants.STATE_I
                 self.value = message["value"]
                 self.recordUpdate(self.value, buffer)
+
             elif event == constants.EVENT_NO_DATA or event == constants.EVENT_NO_DATA_E:
                 self.state = constants.STATE_I
 
@@ -96,6 +102,7 @@ class MESI_Transient_FSM_Memory:
                 self.state = constants.STATE_S
                 self.value = message["value"]
                 self.recordUpdate(self.value, buffer)
+
             elif event == constants.EVENT_NO_DATA or event == constants.EVENT_NO_DATA_E:
                 self.state = constants.STATE_S
 
@@ -104,69 +111,9 @@ class MESI_Transient_FSM_Memory:
                 self.state = constants.STATE_I
                 self.value = message["value"]
                 self.recordUpdate(self.value, buffer)
+
             elif event == constants.EVENT_NO_DATA:
                 self.state = constants.STATE_E_OR_M
+
             elif event == constants.EVENT_NO_DATA_E:
                 self.state = constants.STATE_I
-
-
-
-                
-
-            
-
-
-
-
-
-
-
-
-        ##### MSI #########
-        if self.state == constants.STATE_I_OR_S:
-            if event == constants.EVENT_GET_S:
-                instruction = {
-                    "action" : constants.EVENT_DATA,
-                    "value" : self.value,
-                    "target" : message["src"],
-                    "src" : self.id, 
-                    "dst" : constants.BUS_ID
-                }
-
-                buffer.append(instruction)
-                bus.append(instruction)
-            
-            elif event == constants.EVENT_GET_M:
-                self.state = constants.STATE_M
-
-                instruction = {
-                    "action" : constants.EVENT_DATA,
-                    "value" : self.value,
-                    "target" : message["src"],
-                    "src" : self.id, 
-                    "dst" : constants.BUS_ID
-                }
-                buffer.append(instruction)
-                bus.append(instruction)
-
-        elif self.state == constants.STATE_I_OR_S_D:
-            if event == constants.EVENT_DATA:
-                self.value = message["value"] # Update memory value
-                self.state = constants.STATE_I_OR_S
-                self.recordUpdate(self.value, buffer)
-
-        elif self.state == constants.STATE_M:
-            if event == constants.EVENT_GET_S:
-                self.state = constants.STATE_I_OR_S_D
-
-            elif event == constants.EVENT_PUT_M:
-                self.state = constants.STATE_I_OR_S
-                self.value = message["value"] # Update memory value
-                self.recordUpdate(self.value, buffer)
-                
-
-
-
-
-
-   
