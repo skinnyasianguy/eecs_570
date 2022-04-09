@@ -82,7 +82,7 @@ class MESI_Transient_FSM_Cache:
                     self.recordUpdate(self.value, buffer)
 
                 elif message["target"] == self.id and message["exclusive"] == 1:
-                    self.state == constants.STATE_E
+                    self.state = constants.STATE_E
                     self.value = message["value"]
                     self.recordUpdate(self.value, buffer)
 
