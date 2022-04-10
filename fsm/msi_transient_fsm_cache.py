@@ -87,7 +87,14 @@ class MSI_Transient_FSM_Cache:
                 self.recordUpdate(self.value, buffer)
 
         elif self.state == constants.STATE_S:
-            if event == constants.EVENT_STORE:
+            if event == constants.EVENT_LOAD:
+                instruction = {
+                    "action" : constants.EVENT_HIT,
+                    "target" : self.id
+                }
+                buffer.append(instruction)
+
+            elif event == constants.EVENT_STORE:
                 print("Processor ", self.id, " is transitioning from S to SM_D")
                 self.state = constants.STATE_SM_D
 
@@ -114,7 +121,14 @@ class MSI_Transient_FSM_Cache:
                 self.recordUpdate(self.value, buffer)
 
         elif self.state == constants.STATE_M:
-            if event == constants.EVENT_EVICT:
+            if event == constants.EVENT_LOAD or event == constants.EVENT_STORE:
+                instruction = {
+                    "action" : constants.EVENT_HIT,
+                    "target" : self.id
+                }
+                buffer.append(instruction)
+
+            elif event == constants.EVENT_EVICT:
                 print("Processor ", self.id, " is transitioning from M to I")
 
                 instruction = {

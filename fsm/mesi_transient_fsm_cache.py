@@ -100,7 +100,14 @@ class MESI_Transient_FSM_Cache:
                     self.recordUpdate(self.value, buffer)
 
         elif self.state == constants.STATE_S:
-            if event == constants.EVENT_STORE:
+            if event == constants.EVENT_LOAD:
+                instruction = {
+                    "action" : constants.EVENT_HIT,
+                    "target" : self.id
+                }
+                buffer.append(instruction)
+
+            elif event == constants.EVENT_STORE:
                 self.state = constants.STATE_SM_AD
 
                 instruction = {
@@ -191,6 +198,13 @@ class MESI_Transient_FSM_Cache:
 
 
         elif self.state == constants.STATE_M:
+            if event == constants.EVENT_LOAD or event == constants.EVENT_STORE:
+                instruction = {
+                    "action" : constants.EVENT_HIT,
+                    "target" : self.id
+                }
+                buffer.append(instruction)
+
             if event == constants.EVENT_EVICT:
                 self.state = constants.STATE_MI_A
 

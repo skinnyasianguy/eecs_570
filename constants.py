@@ -18,6 +18,7 @@ EVENT_STORE = "Store"
 EVENT_EVICT = "Evict"
 EVENT_NO_DATA_E = "NoData_E"
 EVENT_NO_DATA = "NoData"
+EVENT_HIT = "Hit"
 
 # Constants for Cache Controller States
 STATE_I = "I"
