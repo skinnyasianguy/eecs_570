@@ -5,6 +5,7 @@ class MSI_Transient_FSM_Cache:
         self.value = value
         self.state = state
         self.id = id
+        self.lastWrite = constants.NULL_VALUE
 
     def getValue(self):
         return self.value
@@ -60,6 +61,7 @@ class MSI_Transient_FSM_Cache:
             elif event == constants.EVENT_STORE:
                 print("Processor ", self.id, " is transitioning from I to IM_D")
                 self.state = constants.STATE_IM_D
+                self.lastWrite = message["value"]
 
                 instruction = {
                     "action" : constants.EVENT_GET_M,
@@ -86,6 +88,9 @@ class MSI_Transient_FSM_Cache:
                 self.state = constants.STATE_M
                 self.recordUpdate(self.value, buffer)
 
+                self.value = self.lastWrite
+                self.recordUpdate(self.value, buffer)
+
         elif self.state == constants.STATE_S:
             if event == constants.EVENT_LOAD:
                 instruction = {
@@ -97,6 +102,7 @@ class MSI_Transient_FSM_Cache:
             elif event == constants.EVENT_STORE:
                 print("Processor ", self.id, " is transitioning from S to SM_D")
                 self.state = constants.STATE_SM_D
+                self.lastWrite = message["value"]
 
                 instruction = {
                     "action" : constants.EVENT_GET_M,
@@ -120,13 +126,21 @@ class MSI_Transient_FSM_Cache:
                 self.value = message["value"]
                 self.recordUpdate(self.value, buffer)
 
+                self.value = self.lastWrite
+                self.recordUpdate(self.value, buffer)
+
         elif self.state == constants.STATE_M:
-            if event == constants.EVENT_LOAD or event == constants.EVENT_STORE:
+            if event == constants.EVENT_LOAD:
                 instruction = {
                     "action" : constants.EVENT_HIT,
                     "target" : self.id
                 }
                 buffer.append(instruction)
+
+            elif event == constants.EVENT_STORE:
+                self.lastWrite = message["value"]
+                self.value = self.lastWrite
+                self.recordUpdate(self.value, buffer)
 
             elif event == constants.EVENT_EVICT:
                 print("Processor ", self.id, " is transitioning from M to I")
