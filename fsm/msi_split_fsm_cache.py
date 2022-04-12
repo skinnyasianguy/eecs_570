@@ -6,6 +6,7 @@ class MSI_Split_FSM_Cache:
         self.state = state
         self.id = id
         self.protocol = "MSI_SPLIT"
+        self.lastWrite = constants.NULL_VALUE
 
     def getValue(self):
         return self.value
@@ -62,6 +63,7 @@ class MSI_Split_FSM_Cache:
 
             elif event == constants.EVENT_STORE:
                 self.state = constants.STATE_IM_AD
+                self.lastWrite = message["value"]
 
                 instruction = {
                     "action" : constants.EVENT_GET_M,
@@ -112,15 +114,15 @@ class MSI_Split_FSM_Cache:
                 # Make sure Data message is meant for this processor 
                 if message["target"] == self.id: 
                     self.state = constants.STATE_IM_A
-                    self.value = message["value"]
-                    self.recordUpdate(self.value, buffer)
+                    self.value = self.lastWrite
+                    self.recordUpdate(None, buffer)
 
         elif self.state == constants.STATE_IM_D:
             if event == constants.EVENT_DATA:
                 # Make sure Data message is meant for this processor 
                 if message["target"] == self.id:  
                     self.state = constants.STATE_M
-                    self.value = message["value"]
+                    self.value = self.lastWrite
                     self.recordUpdate(self.value, buffer)
 
         elif self.state == constants.STATE_IM_A:
@@ -128,7 +130,7 @@ class MSI_Split_FSM_Cache:
                 # Make sure it is an Own GetM
                 if message["src"] == self.id:
                     self.state == constants.STATE_M
-                    self.recordUpdate(None, buffer)
+                    self.recordUpdate(self.value, buffer)
 
         elif self.state == constants.STATE_S:
             if event == constants.EVENT_LOAD:
@@ -140,6 +142,7 @@ class MSI_Split_FSM_Cache:
 
             elif event == constants.EVENT_STORE:
                 self.state = constants.STATE_SM_AD
+                self.lastWrite = message["value"]
 
                 instruction = {
                     "action" : constants.EVENT_GET_M,
@@ -177,15 +180,15 @@ class MSI_Split_FSM_Cache:
                 # Make sure Data message is meant for this processor 
                 if message["target"] == self.id: 
                     self.state = constants.STATE_SM_A
-                    self.value = message["value"]
-                    self.recordUpdate(self.value, buffer)
+                    self.value = self.lastWrite
+                    self.recordUpdate(None, buffer)
 
         elif self.state == constants.STATE_SM_D:
             if event == constants.EVENT_DATA:
                 # Make sure Data message is meant for this processor 
                 if message["target"] == self.id: 
                     self.state = constants.STATE_M
-                    self.value = message["src"]
+                    self.value = self.lastWrite
                     self.recordUpdate(self.value, buffer)
 
         elif self.state == constants.STATE_SM_A:
@@ -193,19 +196,29 @@ class MSI_Split_FSM_Cache:
                 # Make sure it is an Own GetM
                 if message["src"] == self.id:
                     self.state = constants.STATE_M
-                    self.recordUpdate(None, buffer)
+                    self.recordUpdate(self.value, buffer)
 
                 else:
                     self.state = constants.STATE_IM_A
                     self.recordUpdate(None, buffer)
 
         elif self.state == constants.STATE_M:
-            if event == constants.EVENT_LOAD or event == constants.EVENT_STORE:
+            if event == constants.EVENT_LOAD:
                 instruction = {
                     "action" : constants.EVENT_HIT,
                     "target" : self.id
                 }
                 buffer.append(instruction)
+
+            elif event == constants.EVENT_STORE:
+                instruction = {
+                    "action" : constants.EVENT_HIT,
+                    "target" : self.id
+                }
+                buffer.append(instruction)
+
+                self.value = message["value"]
+                self.recordUpdate(self.value, buffer)
 
             elif event == constants.EVENT_EVICT:
                 self.state = constants.STATE_MI_A
