@@ -75,15 +75,19 @@ class MSI_Split_FSM_Memory:
                     self.state = constants.STATE_I_OR_S_D
 
             elif event == constants.EVENT_DATA:
-                self.value = message["value"]
-                self.state = constants.STATE_I_OR_S_A
-                self.recordUpdate(self.value, buffer)
+                if message["src"] != self.id:
+                    self.value = message["value"]
+                    self.state = constants.STATE_I_OR_S_A
+                    self.recordUpdate(self.value, buffer)
 
         elif self.state == constants.STATE_I_OR_S_D:
             if event == constants.EVENT_DATA:
-                self.value = message["value"]
-                self.state = constants.STATE_I_OR_S
-                self.recordUpdate(self.value, buffer)
+                if message["src"] != self.id:
+                    self.value = message["value"]
+                    self.state = constants.STATE_I_OR_S
+                    self.recordUpdate(self.value, buffer)
+
+                print("jere")
 
         elif self.state == constants.STATE_I_OR_S_A:
             if event == constants.EVENT_GET_S:
