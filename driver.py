@@ -18,7 +18,8 @@ class Driver:
             instruction = {
                 "processor" : i,
                 "value" : self.processors[i].getValue(),
-                "state" : self.processors[i].getState()
+                "state" : self.processors[i].getState(),
+                "protocol" : self.processors[i].getProtocol()
             }
 
             self.buffer.append(instruction)

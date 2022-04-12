@@ -6,6 +6,7 @@ class MSI_Transient_FSM_Cache:
         self.state = state
         self.id = id
         self.lastWrite = constants.NULL_VALUE
+        self.protocol = "MSI_ATOMIC"
 
     def getValue(self):
         return self.value
@@ -18,6 +19,9 @@ class MSI_Transient_FSM_Cache:
 
     def getState(self):
         return self.state
+
+    def getProtocol(self):
+        return self.protocol
 
     def recordUpdate(self, value, buffer):
         instruction = {
@@ -84,11 +88,8 @@ class MSI_Transient_FSM_Cache:
             if event == constants.EVENT_DATA:
                 print("Processor ", self.id, " is transitioning from IM_D to M")
 
-                self.value = message["value"]
-                self.state = constants.STATE_M
-                self.recordUpdate(self.value, buffer)
-
                 self.value = self.lastWrite
+                self.state = constants.STATE_M
                 self.recordUpdate(self.value, buffer)
 
         elif self.state == constants.STATE_S:
@@ -123,9 +124,6 @@ class MSI_Transient_FSM_Cache:
             if event == constants.EVENT_DATA:
                 print("Processor ", self.id, " is transitioning from S to M")
                 self.state = constants.STATE_M
-                self.value = message["value"]
-                self.recordUpdate(self.value, buffer)
-
                 self.value = self.lastWrite
                 self.recordUpdate(self.value, buffer)
 

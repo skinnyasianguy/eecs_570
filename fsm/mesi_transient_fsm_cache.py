@@ -5,6 +5,7 @@ class MESI_Transient_FSM_Cache:
         self.value = value
         self.state = state
         self.id = id
+        self.protocol = "MESI"
 
     def getValue(self):
         return self.value
@@ -17,6 +18,9 @@ class MESI_Transient_FSM_Cache:
 
     def getState(self):
         return self.state
+    
+    def getProtocol(self):
+        return self.protocol
 
     def recordUpdate(self, value, buffer):
         instruction = {

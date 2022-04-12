@@ -5,6 +5,7 @@ class MSI_Split_FSM_Cache:
         self.value = value
         self.state = state
         self.id = id
+        self.protocol = "MSI_SPLIT"
 
     def getValue(self):
         return self.value
@@ -26,6 +27,9 @@ class MSI_Split_FSM_Cache:
             "state" : self.state
         }
         buffer.append(instruction)
+
+    def getProtocol(self):
+        return self.protocol
 
     def loadValidActions(self, buffer):
         if self.state == constants.STATE_I:
