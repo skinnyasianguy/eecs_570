@@ -6,6 +6,7 @@ class MESI_Transient_FSM_Cache:
         self.state = state
         self.id = id
         self.protocol = "MESI"
+        self.lastWrite = constants.NULL_VALUE
 
     def getValue(self):
         return self.value
@@ -62,6 +63,7 @@ class MESI_Transient_FSM_Cache:
 
             elif event == constants.EVENT_STORE:
                 self.state = constants.STATE_IM_AD
+                self.lastWrite = message["value"]
 
                 instruction = {
                     "action" : constants.EVENT_GET_M,
@@ -100,7 +102,7 @@ class MESI_Transient_FSM_Cache:
             if event == constants.EVENT_DATA:
                 if message["target"] == self.id:
                     self.state = constants.STATE_M
-                    self.value = message["value"]
+                    self.value = self.lastWrite
                     self.recordUpdate(self.value, buffer)
 
         elif self.state == constants.STATE_S:
@@ -113,6 +115,7 @@ class MESI_Transient_FSM_Cache:
 
             elif event == constants.EVENT_STORE:
                 self.state = constants.STATE_SM_AD
+                self.lastWrite = message["value"]
 
                 instruction = {
                     "action" : constants.EVENT_GET_M,
@@ -148,13 +151,14 @@ class MESI_Transient_FSM_Cache:
             if event == constants.EVENT_DATA:
                 if message["target"] == self.id:
                     self.state = constants.STATE_M
-                    self.value = message["value"]
+                    self.value = self.lastWrite
                     self.recordUpdate(self.value, buffer)
 
         elif self.state == constants.STATE_E:
             if event == constants.EVENT_STORE:
                 self.state = constants.STATE_M
-                self.recordUpdate(None, buffer)
+                self.lastWrite = message["value"]
+                self.recordUpdate(self.value, buffer)
 
             elif event == constants.EVENT_EVICT:
                 self.state = constants.STATE_EI_A
@@ -200,14 +204,23 @@ class MESI_Transient_FSM_Cache:
                     self.value = constants.NULL_VALUE
                     self.recordUpdate(self.value, buffer)
 
-
         elif self.state == constants.STATE_M:
-            if event == constants.EVENT_LOAD or event == constants.EVENT_STORE:
+            if event == constants.EVENT_LOAD:
                 instruction = {
                     "action" : constants.EVENT_HIT,
                     "target" : self.id
                 }
                 buffer.append(instruction)
+
+            elif event == constants.EVENT_STORE:
+                instruction = {
+                    "action" : constants.EVENT_HIT,
+                    "target" : self.id
+                }
+                buffer.append(instruction)
+
+                self.value = message["value"]
+                self.recordUpdate(self.value, buffer)
 
             if event == constants.EVENT_EVICT:
                 self.state = constants.STATE_MI_A
