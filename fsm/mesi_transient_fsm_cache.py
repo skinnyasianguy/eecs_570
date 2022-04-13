@@ -157,7 +157,7 @@ class MESI_Transient_FSM_Cache:
         elif self.state == constants.STATE_E:
             if event == constants.EVENT_STORE:
                 self.state = constants.STATE_M
-                self.lastWrite = message["value"]
+                self.value = message["value"]
                 self.recordUpdate(self.value, buffer)
 
             elif event == constants.EVENT_EVICT:
