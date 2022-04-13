@@ -39,7 +39,7 @@ class MESI_Transient_FSM_Cache:
                 "actions" : [constants.EVENT_LOAD, constants.EVENT_STORE]
             })
 
-        elif self.state == constants.STATE_S or self.state == constants.STATE_M:
+        elif self.state == constants.STATE_S or self.state == constants.STATE_M or self.state == constants.STATE_E:
             buffer.append({
                 "processor" : self.id,
                 "actions" : [constants.EVENT_LOAD, constants.EVENT_STORE, constants.EVENT_EVICT]
