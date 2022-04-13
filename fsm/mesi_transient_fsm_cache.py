@@ -321,7 +321,7 @@ class MESI_Transient_FSM_Cache:
                     }
                     buffer.append(instruction)
                     bus.append(instruction)
-                    self.recordUpdate(None, buffer)
+                    self.recordUpdate(self.value, buffer)
 
             elif event == constants.EVENT_GET_S or constants.EVENT_GET_M:
                 if message["src"] != self.id:
