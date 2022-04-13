@@ -182,6 +182,7 @@ class MESI_Transient_FSM_Cache:
                         "src" : self.id,
                         "dst" : constants.BUS_ID,
                         "value" : self.value,
+                        "exclusive" : 0,
                         "target" : message["src"]
                     }
                     buffer.append(instruction)
