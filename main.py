@@ -10,6 +10,8 @@ from fsm.mesi_transient_fsm_cache import MESI_Transient_FSM_Cache
 from fsm.mesi_transient_fsm_memory import MESI_Transient_FSM_Memory
 from fsm.mosi_transient_fsm_cache import MOSI_Transient_FSM_Cache
 from fsm.mosi_transient_fsm_memory import MOSI_Transient_FSM_Memory
+from fsm.moesi_transient_fsm_cache import MOESI_Transient_FSM_Cache
+from fsm.moesi_transient_fsm_memory import MOESI_Transient_FSM_Memory
 
 from driver import Driver
 from flask_cors import CORS
@@ -116,11 +118,18 @@ def initDriver(protocol, type):
         msiFSM2 = MESI_Transient_FSM_Cache(1, constants.NULL_VALUE, constants.STATE_I)
         msiFSM3 = MESI_Transient_FSM_Cache(2, constants.NULL_VALUE, constants.STATE_I)
         memory = MESI_Transient_FSM_Memory(constants.DEFAUT_VALUE, constants.STATE_I)
+
     elif protocol == "MOSI":
         msiFSM = MOSI_Transient_FSM_Cache(0, constants.NULL_VALUE, constants.STATE_I)
         msiFSM2 = MOSI_Transient_FSM_Cache(1, constants.NULL_VALUE, constants.STATE_I)
         msiFSM3 = MOSI_Transient_FSM_Cache(2, constants.NULL_VALUE, constants.STATE_I)
         memory = MOSI_Transient_FSM_Memory(constants.DEFAUT_VALUE, constants.STATE_I_OR_S)
+
+    elif protocol == "MOESI":
+    	msiFSM = MOESI_Transient_FSM_Cache(0, constants.NULL_VALUE, constants.STATE_I)
+    	msiFSM2 = MOESI_Transient_FSM_Cache(1, constants.NULL_VALUE, constants.STATE_I)
+    	msiFSM3 = MOESI_Transient_FSM_Cache(2, constants.NULL_VALUE, constants.STATE_I)
+    	memory = MOESI_Transient_FSM_Memory(constants.DEFAUT_VALUE, constants.STATE_I)
 
     processors = [msiFSM, msiFSM2, msiFSM3]
     driver = Driver(processors, memory)

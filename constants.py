@@ -7,6 +7,8 @@ NULL_VALUE = sys.maxsize
 MEMORY_ID = -1
 BUS_ID = -2
 
+NUM_PROCESSORS = 3
+
 # Constants for Events
 EVENT_GET_S = "GetS"
 EVENT_GET_M = "GetM"
@@ -19,6 +21,7 @@ EVENT_EVICT = "Evict"
 EVENT_NO_DATA_E = "NoData_E"
 EVENT_NO_DATA = "NoData"
 EVENT_HIT = "Hit"
+EVENT_PUT_S = "PUT_S"
 
 # Constants for Cache Controller States
 STATE_I = "I"
@@ -53,3 +56,8 @@ STATE_E_OR_M = "EorM"
 STATE_I_OR_S_A = "IorS_A"
 STATE_M_OR_O = "MorO"
 STATE_M_OR_O_D = "MorO_D"
+STATE_I = "I"
+STATE_S = "S"
+STATE_E = "E"
+STATE_O = "O"
+STATE_MI_D = "MI_D"
