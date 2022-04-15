@@ -151,11 +151,13 @@ class MOESI_Transient_FSM_Memory:
 				self.state = constants.STATE_MI_D
 			elif event == constants.EVENT_PUT_S:
 				self.num_sharers -= 1
+			elif event == constants.EVENT_NO_DATA:
+				pass
 			else:
 				self.unhandledEvent(event)
 		
 		elif self.state == constants.STATE_S_D:
-			if event == constants.EVENT_DATA:
+			if event == constants.EVENT_NO_DATA:
 				self.state = constants.STATE_O
 			elif event == constants.EVENT_NO_DATA_E:
 				self.num_sharers += 1

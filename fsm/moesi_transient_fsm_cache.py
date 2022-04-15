@@ -258,6 +258,15 @@ class MOESI_Transient_FSM_Cache:
 					buffer.append(instruction)
 					bus.append(instruction)
 
+					instruction = {
+						"action" : constants.EVENT_NO_DATA,
+						"src" : self.id,
+						"dst" : constants.BUS_ID,
+						"target" : constants.MEMORY_ID
+					}
+					buffer.append(instruction)
+					bus.append(instruction)
+
 					self.state = constants.STATE_O
 					self.recordUpdate(None, buffer)
 				else:
