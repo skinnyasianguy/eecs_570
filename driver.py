@@ -76,6 +76,7 @@ class Driver:
                 return
 
             message = self.memory.getQueue()[0]
+            message["reprocessing"] = True
             msg_processed = self.memory.updateState(message, self.buffer, self.bus)
 
             # Event was succesfully processed and did not stall so remove from queue
@@ -88,6 +89,7 @@ class Driver:
                 return
 
             message = self.processors[processorID].getQueue()[0]
+            message["reprocessing"] = True
             msg_processed = self.processors[processorID].updateState(message, self.buffer, self.bus)
 
             # Event was succesfully processed and did not stall so remove from queue

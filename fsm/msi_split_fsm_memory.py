@@ -94,7 +94,8 @@ class MSI_Split_FSM_Memory:
                     self.recordUpdate(self.value, buffer)
 
             elif event == constants.EVENT_GET_S or event == constants.EVENT_GET_M or event == constants.EVENT_PUT_M:
-                self.requestQueue.append(message)
+                if not message.get("reprocessing", True):
+                    self.requestQueue.append(message)
                 msg_processed = False
 
                 instruction = {
