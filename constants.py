@@ -22,6 +22,7 @@ EVENT_NO_DATA_E = "NoData_E"
 EVENT_NO_DATA = "NoData"
 EVENT_HIT = "Hit"
 EVENT_PUT_S = "PUT_S"
+EVENT_STALL = "Stall"
 
 # Constants for Cache Controller States
 STATE_I = "I"

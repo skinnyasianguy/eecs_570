@@ -58,9 +58,25 @@ def execute_bus_event():
     driver.clearBuffer()
     return result
 
+@app.route('/execute_queue_event', methods=['POST'])
+def execute_queue_event():
+    jsonBody = flask.request.json
+    driver.processQueueEvent(jsonBody.get("processor", 0))
+
+    buffer = driver.getBuffer()
+    result = json.dumps(buffer)
+
+    driver.clearBuffer()
+    return result
+
 @app.route('/get_bus_events', methods=['GET'])
 def get_bus_event():
     result = json.dumps(driver.getBus())
+    return result
+
+@app.route('/get_queue_events', methods=['GET'])
+def get_queue_events():
+    result = json.dumps(driver.getQueues())
     return result
 
 @app.route('/clear_machine', methods=['GET'])

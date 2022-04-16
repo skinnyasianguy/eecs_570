@@ -7,6 +7,7 @@ class MSI_Split_FSM_Cache:
         self.id = id
         self.protocol = "MSI_SPLIT"
         self.lastWrite = constants.NULL_VALUE
+        self.requestQueue = []
 
     def getValue(self):
         return self.value
@@ -19,6 +20,9 @@ class MSI_Split_FSM_Cache:
 
     def getState(self):
         return self.state
+
+    def getQueue(self):
+        return self.requestQueue
 
     def recordUpdate(self, value, buffer):
         instruction = {
@@ -47,6 +51,7 @@ class MSI_Split_FSM_Cache:
 
     def updateState(self, message, buffer, bus):  
         event = message["action"]
+        msg_processed = True
 
         if self.state == constants.STATE_I:
             if event == constants.EVENT_LOAD:
@@ -83,7 +88,7 @@ class MSI_Split_FSM_Cache:
 
             elif event == constants.EVENT_DATA:
                 # Make sure Data message is meant for this processor 
-                if message["target"] == self.id: 
+                if self.id in message["target"]: 
                     self.state = constants.STATE_IS_A
                     self.value = message["value"]
                     self.recordUpdate(self.value, buffer)
@@ -91,10 +96,21 @@ class MSI_Split_FSM_Cache:
         elif self.state == constants.STATE_IS_D: 
             if event == constants.EVENT_DATA:
                 # Make sure Data message is meant for this processor 
-                if message["target"] == self.id: 
+                if self.id in message["target"]: 
                     self.state = constants.STATE_S
                     self.value = message["value"]
                     self.recordUpdate(self.value, buffer)
+
+            elif event == constants.EVENT_GET_M:
+                if message["src"] != self.id:
+                    self.requestQueue.append(message)
+                    msg_processed = False
+
+                    instruction = {
+                        "action" : constants.EVENT_STALL,
+                        "target" : self.id
+                    }
+                    buffer.append(instruction)
 
         elif self.state == constants.STATE_IS_A:
             if event == constants.EVENT_GET_S or event == constants.EVENT_GET_M:
@@ -112,7 +128,7 @@ class MSI_Split_FSM_Cache:
 
             elif event == constants.EVENT_DATA:
                 # Make sure Data message is meant for this processor 
-                if message["target"] == self.id: 
+                if self.id in message["target"]: 
                     self.state = constants.STATE_IM_A
                     self.value = self.lastWrite
                     self.recordUpdate(None, buffer)
@@ -120,10 +136,21 @@ class MSI_Split_FSM_Cache:
         elif self.state == constants.STATE_IM_D:
             if event == constants.EVENT_DATA:
                 # Make sure Data message is meant for this processor 
-                if message["target"] == self.id:  
+                if self.id in message["target"]:  
                     self.state = constants.STATE_M
                     self.value = self.lastWrite
                     self.recordUpdate(self.value, buffer)
+
+            elif event == constants.EVENT_GET_M or event == constants.EVENT_GET_S:
+                if message["src"] != self.id:
+                    self.requestQueue.append(message)
+                    msg_processed = False
+
+                    instruction = {
+                        "action" : constants.EVENT_STALL,
+                        "target" : self.id
+                    }
+                    buffer.append(instruction)
 
         elif self.state == constants.STATE_IM_A:
             if event == constants.EVENT_GET_M:
@@ -178,7 +205,7 @@ class MSI_Split_FSM_Cache:
 
             elif event == constants.EVENT_DATA:
                 # Make sure Data message is meant for this processor 
-                if message["target"] == self.id: 
+                if self.id in message["target"]: 
                     self.state = constants.STATE_SM_A
                     self.value = self.lastWrite
                     self.recordUpdate(None, buffer)
@@ -186,10 +213,21 @@ class MSI_Split_FSM_Cache:
         elif self.state == constants.STATE_SM_D:
             if event == constants.EVENT_DATA:
                 # Make sure Data message is meant for this processor 
-                if message["target"] == self.id: 
+                if self.id in message["target"]: 
                     self.state = constants.STATE_M
                     self.value = self.lastWrite
                     self.recordUpdate(self.value, buffer)
+
+            elif event == constants.EVENT_GET_M or event == constants.EVENT_GET_S:
+                if message["src"] != self.id:
+                    self.requestQueue.append(message)
+                    msg_processed = False
+
+                    instruction = {
+                        "action" : constants.EVENT_STALL,
+                        "target" : self.id
+                    }
+                    buffer.append(instruction)
 
         elif self.state == constants.STATE_SM_A:
             if event == constants.EVENT_GET_M:
@@ -239,7 +277,7 @@ class MSI_Split_FSM_Cache:
                     instruction = {
                         "action" : constants.EVENT_DATA,
                         "value" : self.value,
-                        "target" : message["src"],
+                        "target" : {message["src"], constants.MEMORY_ID},
                         "src" : self.id, 
                         "dst" : constants.BUS_ID
                     }
@@ -254,7 +292,7 @@ class MSI_Split_FSM_Cache:
                     instruction = {
                         "action" : constants.EVENT_DATA,
                         "value" : self.value,
-                        "target" : message["src"],
+                        "target" : {message["src"]},
                         "src" : self.id, 
                         "dst" : constants.BUS_ID
                     }
@@ -272,7 +310,7 @@ class MSI_Split_FSM_Cache:
                     instruction = {
                         "action" : constants.EVENT_DATA,
                         "value" : self.value,
-                        "target" : message["src"],
+                        "target" : {constants.MEMORY_ID},
                         "src" : self.id, 
                         "dst" : constants.BUS_ID
                     }
@@ -289,7 +327,7 @@ class MSI_Split_FSM_Cache:
                     instruction = {
                         "action" : constants.EVENT_DATA,
                         "value" : self.value,
-                        "target" : message["src"],
+                        "target" : {message["src"], constants.MEMORY_ID},
                         "src" : self.id, 
                         "dst" : constants.BUS_ID
                     }
@@ -304,7 +342,7 @@ class MSI_Split_FSM_Cache:
                     instruction = {
                         "action" : constants.EVENT_DATA,
                         "value" : self.value,
-                        "target" : message["src"],
+                        "target" : {constants.MEMORY_ID},
                         "src" : self.id, 
                         "dst" : constants.BUS_ID
                     }
@@ -319,7 +357,7 @@ class MSI_Split_FSM_Cache:
                     self.value = constants.NULL_VALUE
                     self.recordUpdate(self.value, buffer)
        
-
+        return msg_processed
 
 
 

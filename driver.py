@@ -36,6 +36,14 @@ class Driver:
         for i in range (len(self.processors)):
             self.processors[i].loadValidActions(self.buffer)
 
+    def getQueues(self):
+        retval = []
+
+        for i in range (len(self.processors)):
+           retval.append(self.processors[i].getQueue())
+
+        return retval
+
     def getBuffer(self):
         return self.buffer
 
@@ -60,6 +68,18 @@ class Driver:
     def processProcessorAction(self, message):
         processorID = message["processor"]
         self.processors[processorID].updateState(message, self.buffer, self.bus)
+
+    def processQueueEvent(self, processorID):
+        # Empty queue so don't do anything
+        if len(self.processors[processorID].getQueue()) == 0:
+            return
+
+        message = self.processors[processorID].getQueue()[0]
+        msg_processed = self.processors[processorID].updateState(message, self.buffer, self.bus)
+
+        # Event was succesfully processed and did not stall so remove from queue
+        if msg_processed:
+            self.processors[processorID].getQueue().pop(0)
 
     def processBusEvent(self, busIndex):
         # Empty bus so don't do anything

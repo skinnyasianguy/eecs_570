@@ -40,7 +40,7 @@ class MSI_Split_FSM_Memory:
                 instruction = {
                     "action" : constants.EVENT_DATA,
                     "value" : self.value,
-                    "target" : message["src"],
+                    "target" : {message["src"]},
                     "src" : self.id, 
                     "dst" : constants.BUS_ID
                 }
@@ -54,7 +54,7 @@ class MSI_Split_FSM_Memory:
                 instruction = {
                     "action" : constants.EVENT_DATA,
                     "value" : self.value,
-                    "target" : message["src"],
+                    "target" : {message["src"]},
                     "src" : self.id, 
                     "dst" : constants.BUS_ID
                 }
@@ -75,19 +75,17 @@ class MSI_Split_FSM_Memory:
                     self.state = constants.STATE_I_OR_S_D
 
             elif event == constants.EVENT_DATA:
-                if message["src"] != self.id:
+                if self.id in message["target"]:
                     self.value = message["value"]
                     self.state = constants.STATE_I_OR_S_A
                     self.recordUpdate(self.value, buffer)
 
         elif self.state == constants.STATE_I_OR_S_D:
             if event == constants.EVENT_DATA:
-                if message["src"] != self.id:
+                if self.id in message["target"]:
                     self.value = message["value"]
                     self.state = constants.STATE_I_OR_S
                     self.recordUpdate(self.value, buffer)
-
-                print("jere")
 
         elif self.state == constants.STATE_I_OR_S_A:
             if event == constants.EVENT_GET_S:
