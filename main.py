@@ -29,6 +29,11 @@ processors = [msiFSM, msiFSM2, msiFSM3]
 memory = MSI_Transient_FSM_Memory(constants.DEFAUT_VALUE, constants.STATE_I_OR_S)
 driver = Driver(processors, memory)
 
+def set_default(obj):
+    if isinstance(obj, set):
+        return list(obj)
+    raise TypeError
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     message = ''
@@ -42,7 +47,7 @@ def execute_processor_action():
 
     driver.processProcessorAction(jsonBody) 
     buffer = driver.getBuffer()
-    result = json.dumps(buffer)
+    result = json.dumps(buffer, default=set_default)
 
     driver.clearBuffer()
     return result
@@ -53,7 +58,7 @@ def execute_bus_event():
     driver.processBusEvent(jsonBody.get("busIndex", 0))
 
     buffer = driver.getBuffer()
-    result = json.dumps(buffer)
+    result = json.dumps(buffer, default=set_default)
 
     driver.clearBuffer()
     return result
@@ -64,19 +69,19 @@ def execute_queue_event():
     driver.processQueueEvent(jsonBody.get("processor", 0))
 
     buffer = driver.getBuffer()
-    result = json.dumps(buffer)
+    result = json.dumps(buffer, default=set_default)
 
     driver.clearBuffer()
     return result
 
 @app.route('/get_bus_events', methods=['GET'])
 def get_bus_event():
-    result = json.dumps(driver.getBus())
+    result = json.dumps(driver.getBus(), default=set_default)
     return result
 
 @app.route('/get_queue_events', methods=['GET'])
 def get_queue_events():
-    result = json.dumps(driver.getQueues())
+    result = json.dumps(driver.getQueues(), default=set_default)
     return result
 
 @app.route('/clear_machine', methods=['GET'])
@@ -88,7 +93,7 @@ def clear_machine():
 @app.route('/get_valid_instructions', methods=['GET'])
 def get_valid_instructions():
     driver.loadValidActions()
-    result = json.dumps(driver.getBuffer())
+    result = json.dumps(driver.getBuffer(), default=set_default)
 
     driver.clearBuffer()
     return result
@@ -103,7 +108,7 @@ def get_initial_state():
     driver.setInitialState()
     buffer = driver.getBuffer()
 
-    result = json.dumps(buffer)
+    result = json.dumps(buffer, default=set_default)
     driver.clearBuffer()
     return result
 
