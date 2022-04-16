@@ -111,7 +111,7 @@ class MSI_Split_FSM_Cache:
 
             elif event == constants.EVENT_GET_M:
                 if message["src"] != self.id:
-                    if not message.get("reprocessing", True):
+                    if not message.get("reprocessing", False):
                         self.requestQueue.append(message)
 
                     msg_processed = False
@@ -153,7 +153,7 @@ class MSI_Split_FSM_Cache:
 
             elif event == constants.EVENT_GET_M or event == constants.EVENT_GET_S:
                 if message["src"] != self.id:
-                    if not message.get("reprocessing", True):
+                    if not message.get("reprocessing", False):
                         self.requestQueue.append(message)
                     msg_processed = False
 
@@ -231,7 +231,7 @@ class MSI_Split_FSM_Cache:
 
             elif event == constants.EVENT_GET_M or event == constants.EVENT_GET_S:
                 if message["src"] != self.id:
-                    if not message.get("reprocessing", True):
+                    if not message.get("reprocessing", False):
                         self.requestQueue.append(message)
                     msg_processed = False
 
