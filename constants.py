@@ -21,7 +21,7 @@ EVENT_EVICT = "Evict"
 EVENT_NO_DATA_E = "NoData_E"
 EVENT_NO_DATA = "NoData"
 EVENT_HIT = "Hit"
-EVENT_PUT_S = "PUT_S"
+EVENT_PUT_S = "PutS"
 EVENT_STALL = "Stall"
 
 # Constants for Cache Controller States
