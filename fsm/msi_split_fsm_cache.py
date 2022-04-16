@@ -24,6 +24,11 @@ class MSI_Split_FSM_Cache:
     def getQueue(self):
         return self.requestQueue
 
+    def reset(self):
+        self.state = constants.STATE_I
+        self.value = constants.NULL_VALUE
+        self.requestQueue = []
+
     def recordUpdate(self, value, buffer):
         instruction = {
             "action" : "Update",
@@ -37,6 +42,9 @@ class MSI_Split_FSM_Cache:
         return self.protocol
 
     def loadValidActions(self, buffer):
+        if len(self.requestQueue) > 0:
+            return
+
         if self.state == constants.STATE_I:
             buffer.append({
                 "processor" : self.id,

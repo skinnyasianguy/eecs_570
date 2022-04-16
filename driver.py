@@ -42,6 +42,7 @@ class Driver:
         for i in range (len(self.processors)):
            retval.append(self.processors[i].getQueue())
 
+        retval.append(self.memory.getQueue())
         return retval
 
     def getBuffer(self):
@@ -58,8 +59,7 @@ class Driver:
 
     def reset(self):
         for i in range (len(self.processors)):
-            self.processors[i].setState(constants.STATE_I)
-            self.processors[i].setValue(constants.NULL_VALUE)
+            self.processors[i].reset()
 
         self.memory.reset()
         self.clearBus()
@@ -70,16 +70,29 @@ class Driver:
         self.processors[processorID].updateState(message, self.buffer, self.bus)
 
     def processQueueEvent(self, processorID):
-        # Empty queue so don't do anything
-        if len(self.processors[processorID].getQueue()) == 0:
-            return
+        if processorID == constants.MEMORY_ID:
+            # Empty queue so don't do anything
+            if len(self.memory.getQueue()) == 0:
+                return
 
-        message = self.processors[processorID].getQueue()[0]
-        msg_processed = self.processors[processorID].updateState(message, self.buffer, self.bus)
+            message = self.memory.getQueue()[0]
+            msg_processed = self.memory.updateState(message, self.buffer, self.bus)
 
-        # Event was succesfully processed and did not stall so remove from queue
-        if msg_processed:
-            self.processors[processorID].getQueue().pop(0)
+            # Event was succesfully processed and did not stall so remove from queue
+            if msg_processed:
+                self.memory.getQueue().pop(0)
+
+        else:
+            # Empty queue so don't do anything
+            if len(self.processors[processorID].getQueue()) == 0:
+                return
+
+            message = self.processors[processorID].getQueue()[0]
+            msg_processed = self.processors[processorID].updateState(message, self.buffer, self.bus)
+
+            # Event was succesfully processed and did not stall so remove from queue
+            if msg_processed:
+                self.processors[processorID].getQueue().pop(0)
 
     def processBusEvent(self, busIndex):
         # Empty bus so don't do anything

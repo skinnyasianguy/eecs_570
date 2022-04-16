@@ -23,6 +23,10 @@ class MOESI_Transient_FSM_Cache:
 	def getProtocol(self):
 		return self.protocol
 
+	def reset(self):
+        self.state = constants.STATE_I
+        self.value = constants.NULL_VALUE
+
 	def recordUpdate(self, value, buffer):
 		instruction = {
 			"action" : "Update",

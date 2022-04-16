@@ -6,6 +6,7 @@ class MSI_Split_FSM_Memory:
         self.state = state
         self.id = constants.MEMORY_ID
         self.owner = None
+        self.requestQueue = []
 
     def getValue(self):
         return self.value
@@ -19,6 +20,9 @@ class MSI_Split_FSM_Memory:
     def getState(self):
         return self.state
 
+    def getQueue(self):
+        return self.requestQueue
+
     def recordUpdate(self, value, buffer):
         instruction = {
             "action" : "Update",
@@ -31,9 +35,11 @@ class MSI_Split_FSM_Memory:
     def reset(self):
         self.state = constants.STATE_I_OR_S
         self.value = constants.DEFAUT_VALUE
+        self.requestQueue = []
 
     def updateState(self, message, buffer, bus):  
         event = message["action"]
+        msg_processed = True
 
         if self.state == constants.STATE_I_OR_S:
             if event == constants.EVENT_GET_S:
@@ -87,6 +93,16 @@ class MSI_Split_FSM_Memory:
                     self.state = constants.STATE_I_OR_S
                     self.recordUpdate(self.value, buffer)
 
+            elif event == constants.EVENT_GET_S or event == constants.EVENT_GET_M or event == constants.EVENT_PUT_M:
+                self.requestQueue.append(message)
+                msg_processed = False
+
+                instruction = {
+                    "action" : constants.EVENT_STALL,
+                    "target" : self.id
+                }
+                buffer.append(instruction)
+
         elif self.state == constants.STATE_I_OR_S_A:
             if event == constants.EVENT_GET_S:
                 self.owner = None 
@@ -96,6 +112,8 @@ class MSI_Split_FSM_Memory:
                 if message["src"] == self.owner:
                     self.owner = None 
                     self.state = constants.STATE_I_OR_S
+
+        return msg_processed
 
 
 
