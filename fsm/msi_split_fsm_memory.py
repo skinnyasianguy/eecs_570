@@ -48,7 +48,7 @@ class MSI_Split_FSM_Memory:
                     "value" : self.value,
                     "target" : {message["src"]},
                     "src" : self.id, 
-                    "dst" : constants.BUS_ID
+                    "dst" : constants.RESPONSE_BUS_ID
                 }
                 buffer.append(instruction)
                 bus.append(instruction)
@@ -62,7 +62,7 @@ class MSI_Split_FSM_Memory:
                     "value" : self.value,
                     "target" : {message["src"]},
                     "src" : self.id, 
-                    "dst" : constants.BUS_ID
+                    "dst" : constants.RESPONSE_BUS_ID
                 }
                 buffer.append(instruction)
                 bus.append(instruction)

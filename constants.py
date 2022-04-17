@@ -6,6 +6,8 @@ NULL_VALUE = sys.maxsize
 # Constants for ID
 MEMORY_ID = -1
 BUS_ID = -2
+REQUEST_BUS_ID = -3
+RESPONSE_BUS_ID = -4
 
 NUM_PROCESSORS = 3
 

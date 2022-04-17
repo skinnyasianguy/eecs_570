@@ -68,7 +68,7 @@ class MSI_Split_FSM_Cache:
                 instruction = {
                     "action" : constants.EVENT_GET_S,
                     "src" : self.id,
-                    "dst" : constants.BUS_ID
+                    "dst" : constants.REQUEST_BUS_ID
                 }
                 bus.append(instruction)
                 buffer.append(instruction)
@@ -81,7 +81,7 @@ class MSI_Split_FSM_Cache:
                 instruction = {
                     "action" : constants.EVENT_GET_M,
                     "src" : self.id,
-                    "dst" : constants.BUS_ID
+                    "dst" : constants.REQUEST_BUS_ID
                 }
                 bus.append(instruction)
                 buffer.append(instruction)
@@ -185,7 +185,7 @@ class MSI_Split_FSM_Cache:
                 instruction = {
                     "action" : constants.EVENT_GET_M,
                     "src" : self.id,
-                    "dst" : constants.BUS_ID
+                    "dst" : constants.REQUEST_BUS_ID
                 }
                 bus.append(instruction)
                 buffer.append(instruction)
@@ -276,7 +276,7 @@ class MSI_Split_FSM_Cache:
                 instruction = {
                     "action" : constants.EVENT_PUT_M,
                     "src" : self.id,
-                    "dst" : constants.BUS_ID,
+                    "dst" : constants.REQUEST_BUS_ID,
                 }
                 bus.append(instruction)
                 buffer.append(instruction)
@@ -291,7 +291,7 @@ class MSI_Split_FSM_Cache:
                         "value" : self.value,
                         "target" : {message["src"], constants.MEMORY_ID},
                         "src" : self.id, 
-                        "dst" : constants.BUS_ID
+                        "dst" : constants.RESPONSE_BUS_ID
                     }
                     buffer.append(instruction)
                     bus.append(instruction)
@@ -306,7 +306,7 @@ class MSI_Split_FSM_Cache:
                         "value" : self.value,
                         "target" : {message["src"]},
                         "src" : self.id, 
-                        "dst" : constants.BUS_ID
+                        "dst" : constants.RESPONSE_BUS_ID
                     }
                     buffer.append(instruction)
                     bus.append(instruction)
@@ -324,7 +324,7 @@ class MSI_Split_FSM_Cache:
                         "value" : self.value,
                         "target" : {constants.MEMORY_ID},
                         "src" : self.id, 
-                        "dst" : constants.BUS_ID
+                        "dst" : constants.REQUEST_BUS_ID
                     }
                     buffer.append(instruction)
                     bus.append(instruction)
@@ -341,7 +341,7 @@ class MSI_Split_FSM_Cache:
                         "value" : self.value,
                         "target" : {message["src"], constants.MEMORY_ID},
                         "src" : self.id, 
-                        "dst" : constants.BUS_ID
+                        "dst" : constants.RESPONSE_BUS_ID
                     }
                     buffer.append(instruction)
                     bus.append(instruction)
@@ -356,7 +356,7 @@ class MSI_Split_FSM_Cache:
                         "value" : self.value,
                         "target" : {constants.MEMORY_ID},
                         "src" : self.id, 
-                        "dst" : constants.BUS_ID
+                        "dst" : constants.RESPONSE_BUS_ID
                     }
                     buffer.append(instruction)
                     bus.append(instruction)
